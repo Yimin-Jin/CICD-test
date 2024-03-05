@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
           npx teamsapp account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
           --service-principal true \
           --tenant ${{vars.AZURE_TENANT_ID}} \
-          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_ CLIENT_SECRET }} \
+          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
           --interactive false
 
       - name: Deploy to hosting environment
