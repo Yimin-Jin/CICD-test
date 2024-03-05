@@ -7,7 +7,7 @@ export function CurrentUser(props: { userName?: string }) {
   };
   return (
     <div>
-      <h2>Get the current user</h2>
+      <h2>Get the current user Test</h2>
       <p>Access basic information about the user like this:</p>
       <pre>
         {`const authConfig: TeamsUserCredentialAuthConfig = {\n  clientId: process.env.REACT_APP_CLIENT_ID,\n  initiateLoginEndpoint: process.env.REACT_APP_START_LOGIN_PAGE_URL,\n};\n\nconst credential = new TeamsUserCredential(authConfig);\nconst user = await credential.getUserInfo();`}
