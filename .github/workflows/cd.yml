@@ -1,0 +1,57 @@
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TEAMSAPP_CLI_VERSION: "3.0.0-beta.2024012307.0"
+      # Add extra environment variables here so that teamsapp cli can use them.
+      AAD_APP_CLIENT_ID: ${{vars.AAD_APP_CLIENT_ID}}
+      API_FUNCTION_ENDPOINT: ${{vars.API_FUNCTION_ENDPOINT}}
+      API_FUNCTION_RESOURCE_ID: ${{vars.API_FUNCTION_RESOURCE_ID}}
+      APP_NAME_SUFFIX: ${{vars.APP_NAME_SUFFIX}}
+      AZURE_SERVICE_PRINCIPAL_CLIENT_ID: ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}
+      AZURE_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
+      TAB_AZURE_STORAGE_RESOURCE_ID: ${{vars.TAB_AZURE_STORAGE_RESOURCE_ID}}
+      TAB_DOMAIN: ${{vars.TAB_DOMAIN}}
+      TAB_ENDPOINT: ${{vars.TAB_ENDPOINT}}
+      TEAMS_APP_ID: ${{vars.TEAMS_APP_ID}}
+
+    steps:
+      - name: "Checkout Github Action"
+        uses: actions/checkout@master
+
+      - name: Setup Node 18.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
+
+      - name: install cli
+        run: |
+          npm install @microsoft/teamsapp-cli@${{env.TEAMSAPP_CLI_VERSION}}
+
+      - name: Login Azure by service principal
+        run: |
+          npx teamsapp account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
+          --service-principal true \
+          --tenant ${{vars.AZURE_TENANT_ID}} \
+          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_ CLIENT_SECRET }} \
+          --interactive false
+
+      - name: Deploy to hosting environment
+        run: |
+          npx teamsapp deploy --ignore-env-file true \
+          --interactive false
+
+      - name: Package app
+        run: |
+          npx teamsapp package
+
+      - name: upload appPackage
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact
+          path: appPackage/build/appPackage.zip
+
